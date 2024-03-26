@@ -215,6 +215,7 @@ return {
         ["minecraft:cut_copper"] = 10,
         ["minecraft:cut_copper_slab"] = 5,
         ["minecraft:cut_copper_stairs"] = 7,
-        ["minecraft:cut_copper_block"] = 20
+        ["minecraft:cut_copper_block"] = 20,
+        ["minecraft:quartz"] = 10
     }
 }
