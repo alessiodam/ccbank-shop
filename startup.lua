@@ -492,6 +492,9 @@ local function handleClicks()
 end
 
 local function main()
+    term.clear()
+    term.setCursorPos(1, 1)
+    print("BoCC Shop")
     logging.init(1, true, "log.txt")
     logging.info("Init")
 
