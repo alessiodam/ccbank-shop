@@ -23,6 +23,10 @@ return {
                 background = colors.green,
                 text = colors.black
             },
+            purchase_timed_out = {
+                background = colors.red,
+                text = colors.black
+            },
             error = {
                 background = colors.red,
                 text = colors.black
@@ -41,6 +45,7 @@ return {
     },
 
     PRICES = {
+        ["minecraft:oak_log"] = 1,
         ["minecraft:coal"] = 2,
         ["minecraft:charcoal"] = 5,
         ["minecraft:iron_ingot"] = 10,
