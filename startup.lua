@@ -1,5 +1,4 @@
 -- os.pullEvent = os.pullEventRaw
-os.loadAPI("json")
 os.loadAPI("logging")
 local config = require("config")
 local expect = require("cc.expect").expect
@@ -104,7 +103,7 @@ local function login()
     local postHeaders = {
         ["Content-Type"] = "application/json"
     }
-    local response = http.post(server_login_url, json.encode(postData), postHeaders)
+    local response = http.post(server_login_url, textutils.serializeJSON(postData), postHeaders)
     if not response then
         logging.error("Login request failed")
         os.sleep(2)
@@ -119,7 +118,7 @@ local function login()
         os.shutdown()
     end
 
-    local decodedResponse, decodeError = json.decode(responseBody)
+    local decodedResponse, decodeError = textutils.unserializeJSON(responseBody)
     if not decodedResponse then
         logging.error("decoding login response JSON: " .. (decodeError or "Unknown"))
         os.sleep(2)
@@ -156,7 +155,7 @@ local function create_transaction(target_username, amount)
         amount = amount
     }
 
-    local response = http.post(new_transaction_url, json.encode(postData), headers)
+    local response = http.post(new_transaction_url, textutils.serializeJSON(postData), headers)
     if not response then
         return {success = false, message = "Failed to connect to server"}
     end
@@ -166,7 +165,7 @@ local function create_transaction(target_username, amount)
         return {success = false, message = "Empty response from server"}
     end
 
-    local decodedResponse, decodeError = json.decode(responseBody)
+    local decodedResponse, decodeError = textutils.unserializeJSON(responseBody)
     if not decodedResponse then
         return {success = false, message = "Failed to parse server response"}
     end
@@ -309,7 +308,7 @@ local function purchasingScreen()
             end
             timer_id = os.startTimer(1)
         elseif event == "websocket_message" then
-            local transaction_json = json.decode(message)
+            local transaction_json = textutils.unserializeJSON(message)
             username_that_paid = transaction_json.from_user
             
             -- If the transaction is to the shop's wallet
@@ -325,9 +324,9 @@ local function purchasingScreen()
                             logging.success("refund success, transaction ID: " .. transaction_response.transaction_id)
                         else
                             refund_message = "Failed to refund " .. extra_money .. "$"
-                            logging.error(json.encode(transaction_response))
+                            logging.error(textutils.serializeJSON(transaction_response))
                         end
-                        logging.debug(json.encode(transaction_response))
+                        logging.debug(textutils.serializeJSON(transaction_response))
                     end
                     logging.success("Transaction successful from " .. username_that_paid)
                     transaction_complete = true
@@ -344,7 +343,7 @@ local function purchasingScreen()
                     if transaction_response.success then
                         logging.success("refund success, transaction ID: " .. transaction_response.transaction_id)
                     else
-                        logging.error(json.encode(transaction_response))
+                        logging.error(textutils.serializeJSON(transaction_response))
                     end
                 end
             end
@@ -492,12 +491,6 @@ local function handleClicks()
 end
 
 local function main()
-    term.clear()
-    term.setCursorPos(1, 1)
-    print("BoCC Shop")
-    logging.init(1, true, "log.txt")
-    logging.info("Init")
-
     -- Login
     logging.info("Logging in")
     login()
@@ -526,4 +519,21 @@ local function main()
     end
 end
 
-main()
+term.clear()
+term.setCursorPos(1, 1)
+print("BoCC Shop")
+logging.init(1, true, "log.txt")
+logging.info("Init")
+
+local success, result = pcall(main)
+
+if not success then
+    if result == "Terminated" then
+        logging.warning("Terminated, exiting.")
+        return
+    end
+    logging.error("Error: " .. result)
+    logging.error(debug.traceback())
+    os.sleep(0.5)
+    os.reboot()
+end
