@@ -3,7 +3,6 @@
 local to_get = {
     "extern:config.lua:https://raw.githubusercontent.com/tkbstudios/ccbank-shop/main/config.lua.example",
     "extern:startup.lua:https://raw.githubusercontent.com/tkbstudios/ccbank-shop/main/startup.lua",
-    "L:json:json",
     "L:logging:logging",
 }
 local program_name = "Bank Of CC Shop"
