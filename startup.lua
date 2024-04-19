@@ -1,5 +1,5 @@
 -- os.pullEvent = os.pullEventRaw
-os.loadAPI("logging")
+local logging = require("logging")
 local config = require("config")
 local expect = require("cc.expect").expect
 
