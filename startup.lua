@@ -313,7 +313,7 @@ local function purchasingScreen()
             
             -- If the transaction is to the shop's wallet
             if transaction_json.to_user == config.SHOP_WALLET_USERNAME then
-                if transaction_json.amount >= total_amount_to_pay then
+                if tonumber(transaction_json.amount) >= tonumber(total_amount_to_pay) then
                     local extra_money = transaction_json.amount - total_amount_to_pay
                     if extra_money > 0 then
                         -- If there is extra money, create a refund transaction
